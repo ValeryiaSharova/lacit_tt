@@ -113,6 +113,41 @@ describe('TaskBoardComponent', () => {
         ?.nativeElement.querySelectorAll('a.task').length,
     ).toBe(0);
   });
+
+  it('filters tasks by title after debounced search input', async () => {
+    await taskServiceSeed(fixture);
+    clickButton(fixture, 'Добавить задачу');
+    await fixture.whenStable();
+    setControlValue(fixture.nativeElement.querySelector('#task-title'), 'Другая задача');
+    setControlValue(fixture.nativeElement.querySelector('#task-description'), '');
+    clickButton(fixture, 'Добавить');
+    await fixture.whenStable();
+
+    const searchInput = fixture.nativeElement.querySelector(
+      '.board__search-input',
+    ) as HTMLInputElement;
+    searchInput.value = 'Другая';
+    searchInput.dispatchEvent(new Event('input'));
+    await debounceWait();
+    fixture.detectChanges();
+
+    expect(text(fixture)).toContain('Другая задача');
+    expect(text(fixture)).not.toContain('Переносимая задача');
+  });
+
+  it('shows a message when search matches no tasks', async () => {
+    await taskServiceSeed(fixture);
+
+    const searchInput = fixture.nativeElement.querySelector(
+      '.board__search-input',
+    ) as HTMLInputElement;
+    searchInput.value = 'нет такой задачи';
+    searchInput.dispatchEvent(new Event('input'));
+    await debounceWait();
+    fixture.detectChanges();
+
+    expect(text(fixture)).toContain('Задачи не найдены');
+  });
 });
 
 async function taskServiceSeed(fixture: ComponentFixture<TaskBoardComponent>): Promise<void> {
@@ -138,6 +173,10 @@ function clickButton(fixture: ComponentFixture<TaskBoardComponent>, label: strin
   }
 
   button.click();
+}
+
+function debounceWait(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 350));
 }
 
 function setControlValue(control: Element | null, value: string): void {

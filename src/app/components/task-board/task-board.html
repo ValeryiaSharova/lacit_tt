@@ -4,6 +4,20 @@
     <button type="button" class="board__add" (click)="openCreateModal()">Добавить задачу</button>
   </header>
 
+  <label class="board__search">
+    <span class="board__search-label">Поиск задач</span>
+    <input
+      type="search"
+      class="board__search-input"
+      placeholder="Поиск задач..."
+      (input)="onSearchInput($event)"
+    />
+  </label>
+
+  @if (showNoSearchResults()) {
+    <p class="board__search-empty" role="status">Задачи не найдены</p>
+  }
+
   <div class="columns">
     <app-task-board-section
       heading="Сделаю"
