@@ -27,6 +27,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/lacit_tt/",
               "budgets": [
                 {
                   "type": "initial",
