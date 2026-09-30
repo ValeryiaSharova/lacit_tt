@@ -1,59 +1,154 @@
-# LacitTt
+# Task Board
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.37.
+Web-приложение для управления списком задач на Angular: доска с двумя колонками, поиск, создание и редактирование задач, переход к деталям по маршруту.
 
-## Development server
+## Demo
 
-To start a local development server, run:
+https://valeryiasharova.github.io/lacit_tt/
+
+## Реализовано
+
+- просмотр списка задач;
+- создание задачи;
+- редактирование задачи;
+- просмотр деталей задачи;
+- удаление задачи;
+- два статуса: «Сделаю» и «Готово»;
+- drag & drop между колонками;
+- визуальное выделение выполненных задач;
+- поиск по названию и описанию с debounce;
+- сохранение задач в `localStorage`;
+- синхронизация задач между вкладками браузера через `storage` event;
+- валидация названия и описания;
+- отображение счётчиков символов;
+- маршрутизация к странице деталей задачи;
+- обработка неизвестного UUID;
+- unit-тесты.
+
+## Технологии
+
+- Angular 21;
+- TypeScript;
+- Signals;
+- Signal Forms;
+- RxJS;
+- Angular Router;
+- Angular CDK Drag & Drop;
+- `localStorage`;
+- Karma / Jasmine;
+- ESLint (angular-eslint);
+- Prettier.
+
+## Архитектура
+
+- `TaskService` хранит состояние задач через Signal и синхронизирует его с `localStorage`;
+- `TaskBoard` отвечает за доску, поиск и открытие модального окна создания;
+- `TaskBoardSection` отвечает за отображение колонок и drag & drop;
+- `TaskCreateModal` отвечает за создание задачи;
+- `TaskDetails` отвечает за просмотр, редактирование и удаление задачи;
+- состояние фильтрации реализовано через `computed`;
+- RxJS используется для debounce поиска и синхронизации `storage` event между вкладками.
+
+## Хранение данных
+
+Задачи сериализуются в JSON и сохраняются в браузерном `localStorage` под фиксированным ключом.
+
+При изменении данных в другой вкладке приложение получает `storage` event и обновляет локальное состояние.
+
+Backend и база данных не используются.
+
+## Запуск проекта
+
+### Требования
+
+- Node.js
+- npm
+
+### Установка и запуск
 
 ```bash
-ng serve
+npm install
+npm start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+После запуска приложение доступно по адресу:
 
-## Code scaffolding
+`http://localhost:4200/`
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Проверки
+
+Проверка линтинга:
 
 ```bash
-ng generate component component-name
+npm run lint
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Запуск unit-тестов:
 
 ```bash
-ng generate --help
+npm test
 ```
 
-## Building
-
-To build the project run:
+Production build:
 
 ```bash
-ng build
+npm run build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Форматирование
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Проверка форматирования:
 
 ```bash
-ng test
+npm run format:check
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Автоматическое форматирование:
 
 ```bash
-ng e2e
+npm run format
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## CI/CD
 
-## Additional Resources
+Для проекта настроен GitHub Actions.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Workflow запускается:
+
+- при push в `main`;
+- при создании или обновлении Pull Request в `main`.
+
+В рамках CI выполняются:
+
+1. установка зависимостей;
+2. ESLint;
+3. unit-тесты;
+4. production build.
+
+После успешного push в `main` production-сборка автоматически деплоится на GitHub Pages.
+
+GitHub Pages настроен через GitHub Actions.
+
+## Тестирование
+
+Проект содержит unit-тесты для основных сценариев приложения, включая:
+
+- создание, редактирование и удаление задач;
+- валидацию формы;
+- поиск;
+- изменение статуса через drag & drop;
+- страницу деталей и маршрутизацию;
+- работу с `localStorage`;
+- синхронизацию состояния между вкладками.
+
+## Структура проекта
+
+```text
+src/app/
+├── components/
+├── forms/
+├── models/
+└── services/
+```
+
+Проект выполнен в рамках тестового задания.
