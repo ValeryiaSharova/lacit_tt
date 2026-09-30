@@ -17,6 +17,10 @@ export class TaskBoardComponent {
 
   protected readonly TaskStatus = TaskStatus;
 
+  protected readonly todoDropListId = 'task-board-todo';
+
+  protected readonly doneDropListId = 'task-board-done';
+
   protected readonly todoTasks = computed(() =>
     this.taskService.tasks().filter((task) => task.status === TaskStatus.Todo),
   );

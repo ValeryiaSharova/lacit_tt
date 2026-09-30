@@ -5,8 +5,20 @@
   </header>
 
   <div class="columns">
-    <app-task-board-section heading="Сделаю" [tasks]="todoTasks()" [status]="TaskStatus.Todo" />
-    <app-task-board-section heading="Готово" [tasks]="doneTasks()" [status]="TaskStatus.Done" />
+    <app-task-board-section
+      heading="Сделаю"
+      [tasks]="todoTasks()"
+      [status]="TaskStatus.Todo"
+      [dropListId]="todoDropListId"
+      [connectedDropListIds]="[doneDropListId]"
+    />
+    <app-task-board-section
+      heading="Готово"
+      [tasks]="doneTasks()"
+      [status]="TaskStatus.Done"
+      [dropListId]="doneDropListId"
+      [connectedDropListIds]="[todoDropListId]"
+    />
   </div>
 
   @if (isCreateModalOpen()) {

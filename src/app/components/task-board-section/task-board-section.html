@@ -1,16 +1,43 @@
-<section class="column" [attr.aria-labelledby]="headingId()">
+<section
+  class="column"
+  cdkDropList
+  [id]="dropListId()"
+  [cdkDropListData]="tasks()"
+  [cdkDropListConnectedTo]="connectedDropListIds()"
+  (cdkDropListDropped)="onTaskDropped($event)"
+  [attr.aria-labelledby]="headingId()"
+>
   <h2 [id]="headingId()" class="column__title">{{ heading() }}</h2>
 
   <ul class="task-list">
     @for (task of tasks(); track task.uuid) {
       <li>
         <a
+          cdkDrag
+          [cdkDragData]="task"
           class="task"
           [class.task--todo]="status() === TaskStatus.Todo"
           [class.task--done]="status() === TaskStatus.Done"
           [routerLink]="['/tasks', task.uuid]"
         >
           <h3 class="task__title">{{ task.title }}</h3>
+
+          <div
+            *cdkDragPlaceholder
+            class="task task__drag-placeholder"
+            [class.task--todo]="status() === TaskStatus.Todo"
+            [class.task--done]="status() === TaskStatus.Done"
+            aria-hidden="true"
+          ></div>
+
+          <div
+            *cdkDragPreview
+            class="task task__drag-preview"
+            [class.task--todo]="status() === TaskStatus.Todo"
+            [class.task--done]="status() === TaskStatus.Done"
+          >
+            <h3 class="task__title">{{ task.title }}</h3>
+          </div>
         </a>
       </li>
     } @empty {
