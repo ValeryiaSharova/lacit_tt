@@ -1,8 +1,15 @@
 <main class="board">
-  <h1 class="board__title">Доска задач</h1>
+  <header class="board__header">
+    <h1 class="board__title">Доска задач</h1>
+    <button type="button" class="board__add" (click)="openCreateModal()">Добавить задачу</button>
+  </header>
 
   <div class="columns">
     <app-task-board-section heading="Сделаю" [tasks]="todoTasks()" [status]="TaskStatus.Todo" />
     <app-task-board-section heading="Готово" [tasks]="doneTasks()" [status]="TaskStatus.Done" />
   </div>
+
+  @if (isCreateModalOpen()) {
+    <app-task-create-modal (closed)="closeCreateModal()" />
+  }
 </main>

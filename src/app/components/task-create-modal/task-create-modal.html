@@ -1,0 +1,58 @@
+<div class="modal" tabindex="-1" (keydown.escape)="dismiss()">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="task-create-heading">
+    <header class="dialog__header">
+      <h2 id="task-create-heading" class="dialog__title">Добавить задачу</h2>
+      <button type="button" class="dialog__close" aria-label="Закрыть" (click)="dismiss()">
+        <svg class="dialog__close-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <path
+            d="M3.2 3.2 12.8 12.8M12.8 3.2 3.2 12.8"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-width="1.5"
+          />
+        </svg>
+      </button>
+    </header>
+
+    <form class="form" novalidate (submit)="onSubmit($event)">
+      <div class="field">
+        <label class="field__label" for="task-title">Заголовок</label>
+        <input
+          id="task-title"
+          class="field__control"
+          type="text"
+          autocomplete="off"
+          [formField]="taskForm.title"
+          [attr.aria-invalid]="taskForm.title().touched() && taskForm.title().invalid()"
+        />
+        <p class="field__counter">{{ taskForm.title().value().length }} / 20</p>
+        @if (taskForm.title().touched() && taskForm.title().invalid()) {
+          <p class="field__error">{{ taskForm.title().errors()[0].message }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="task-description">Описание</label>
+        <textarea
+          id="task-description"
+          class="field__control field__control--area"
+          rows="3"
+          [formField]="taskForm.description"
+          [attr.aria-invalid]="taskForm.description().touched() && taskForm.description().invalid()"
+        ></textarea>
+        <p class="field__counter">{{ taskForm.description().value().length }} / 200</p>
+        @if (taskForm.description().touched() && taskForm.description().invalid()) {
+          <p class="field__error">{{ taskForm.description().errors()[0].message }}</p>
+        }
+      </div>
+
+      <div class="form__actions">
+        <button type="button" class="button button--ghost" (click)="dismiss()">Отмена</button>
+        <button type="submit" class="button button--primary">Добавить</button>
+      </div>
+    </form>
+  </div>
+
+  <button type="button" class="backdrop" aria-label="Закрыть" (click)="dismiss()"></button>
+</div>
