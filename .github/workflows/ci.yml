@@ -35,11 +35,11 @@ jobs:
       - name: Production build
         run: npm run build
 
-      - name: Upload Pages artifact
+      - name: Upload build output
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages
+          name: build-output
           path: dist/lacit_tt/browser
           retention-days: 1
 
@@ -55,10 +55,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Download artifact
+      - name: Download build output
         uses: actions/download-artifact@v4
         with:
-          name: github-pages
+          name: build-output
           path: dist/lacit_tt/browser
 
       - name: Configure SPA fallback
