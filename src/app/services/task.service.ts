@@ -1,15 +1,30 @@
-import { Injectable, signal } from '@angular/core';
+import { DestroyRef, inject, Injectable, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter, fromEvent, map } from 'rxjs';
 import { Task, TaskStatus } from '../models/task';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
-  private static readonly storageKey = 'tasks';
+  static readonly storageKey = 'tasks';
+
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly tasksSignal = signal<Task[]>(this.loadTasks());
 
   public readonly tasks = this.tasksSignal.asReadonly();
+
+  constructor() {
+    fromEvent<StorageEvent>(window, 'storage')
+      .pipe(
+        filter((event) => event.key === TaskService.storageKey),
+        map((event) => this.tasksFromStorageEvent(event)),
+        filter((tasks): tasks is Task[] => tasks !== undefined),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((tasks) => this.applyTasksFromOtherTab(tasks));
+  }
 
   public addTask(title: string, description: string): void {
     const task: Task = {
@@ -35,6 +50,22 @@ export class TaskService {
   private setTasks(tasks: Task[]): void {
     this.tasksSignal.set(tasks);
     localStorage.setItem(TaskService.storageKey, JSON.stringify(tasks));
+  }
+
+  private applyTasksFromOtherTab(tasks: Task[]): void {
+    this.tasksSignal.set(tasks);
+  }
+
+  private tasksFromStorageEvent(event: StorageEvent): Task[] | undefined {
+    if (event.newValue === null) {
+      return [];
+    }
+
+    try {
+      return JSON.parse(event.newValue) as Task[];
+    } catch {
+      return undefined;
+    }
   }
 
   private loadTasks(): Task[] {
