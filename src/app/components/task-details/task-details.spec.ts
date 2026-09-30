@@ -95,6 +95,7 @@ describe('TaskDetailsComponent', () => {
     expect(details?.querySelector('article')).toBeNull();
     expect(details?.querySelector('form')).toBeNull();
     expect(buttonByLabel(details, 'Редактировать')).toBeNull();
+    expect(buttonByLabel(details, 'Удалить')).toBeNull();
   });
 
   it('fills the edit form with the current task and saves changes', async () => {
@@ -214,6 +215,53 @@ describe('TaskDetailsComponent', () => {
     expect(details?.textContent).toContain('Максимум 20 символов');
     expect(details?.textContent).not.toContain('Максимум 200 символов');
     expect(service.tasks().find((item) => item.uuid === task.uuid)).toEqual(task);
+  });
+
+  it('does not show delete while editing', async () => {
+    const task = seedTask('На удаление', 'Описание');
+    const harness = await RouterTestingHarness.create(`/tasks/${task.uuid}`);
+    const details = harness.routeNativeElement;
+
+    clickButton(details, 'Редактировать');
+    await harness.fixture.whenStable();
+
+    expect(buttonByLabel(details, 'Удалить')).toBeNull();
+    expect(buttonByLabel(details, 'Редактировать')).toBeNull();
+  });
+
+  it('keeps the task when delete confirmation is cancelled', async () => {
+    const task = seedTask('Оставить', 'Не удалять');
+    const confirmSpy = spyOn(window, 'confirm').and.returnValue(false);
+    const harness = await RouterTestingHarness.create(`/tasks/${task.uuid}`);
+    const details = harness.routeNativeElement;
+    const service = TestBed.inject(TaskService);
+
+    clickButton(details, 'Удалить');
+    await harness.fixture.whenStable();
+
+    expect(confirmSpy).toHaveBeenCalledWith('Вы уверены, что хотите удалить эту задачу?');
+    expect(service.tasks().find((item) => item.uuid === task.uuid)).toEqual(task);
+    expect(details?.querySelector('h1')?.textContent).toContain('Оставить');
+  });
+
+  it('deletes the task and returns to the board after confirmation', async () => {
+    const task = seedTask('Удалить меня', 'Пропаду');
+    spyOn(window, 'confirm').and.returnValue(true);
+    const harness = await RouterTestingHarness.create(`/tasks/${task.uuid}`);
+    const service = TestBed.inject(TaskService);
+
+    clickButton(harness.routeNativeElement, 'Удалить');
+    await harness.fixture.whenStable();
+
+    expect(service.tasks().find((item) => item.uuid === task.uuid)).toBeUndefined();
+    expect(harness.routeNativeElement?.querySelector('h1')?.textContent).toContain('Доска задач');
+    expect(harness.routeNativeElement?.textContent).not.toContain('Удалить меня');
+
+    await harness.navigateByUrl(`/tasks/${task.uuid}`);
+    await harness.fixture.whenStable();
+
+    expect(harness.routeNativeElement?.textContent).toContain('Задача не найдена');
+    expect(buttonByLabel(harness.routeNativeElement, 'Удалить')).toBeNull();
   });
 });
 

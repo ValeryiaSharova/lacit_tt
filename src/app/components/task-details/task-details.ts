@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { form, FormField, submit } from '@angular/forms/signals';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   applyTaskTextRules,
   taskDescriptionMaxLength,
@@ -29,6 +29,7 @@ const emptyEditDraft = (): TaskEditDraft => ({
 })
 export class TaskDetailsComponent {
   private readonly taskService = inject(TaskService);
+  private readonly router = inject(Router);
 
   readonly uuid = input.required<string>();
 
@@ -69,6 +70,21 @@ export class TaskDetailsComponent {
 
     this.taskForm().reset(this.draftFrom(current));
     this.editingUuid.set(current.uuid);
+  }
+
+  protected confirmAndDelete(): void {
+    const current = this.task();
+
+    if (!current || this.editing()) {
+      return;
+    }
+
+    if (!window.confirm('Вы уверены, что хотите удалить эту задачу?')) {
+      return;
+    }
+
+    this.taskService.deleteTask(current.uuid);
+    void this.router.navigateByUrl('/');
   }
 
   protected cancelEditing(): void {
