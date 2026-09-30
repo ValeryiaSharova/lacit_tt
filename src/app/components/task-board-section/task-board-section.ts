@@ -1,8 +1,10 @@
 import { Component, computed, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Task, TaskStatus } from '../../models/task';
 
 @Component({
   selector: 'app-task-board-section',
+  imports: [RouterLink],
   templateUrl: './task-board-section.html',
   styleUrl: './task-board-section.css',
 })

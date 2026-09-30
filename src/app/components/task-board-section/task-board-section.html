@@ -3,12 +3,15 @@
 
   <ul class="task-list">
     @for (task of tasks(); track task.uuid) {
-      <li
-        class="task"
-        [class.task--todo]="status() === TaskStatus.Todo"
-        [class.task--done]="status() === TaskStatus.Done"
-      >
-        <h3 class="task__title">{{ task.title }}</h3>
+      <li>
+        <a
+          class="task"
+          [class.task--todo]="status() === TaskStatus.Todo"
+          [class.task--done]="status() === TaskStatus.Done"
+          [routerLink]="['/tasks', task.uuid]"
+        >
+          <h3 class="task__title">{{ task.title }}</h3>
+        </a>
       </li>
     } @empty {
       <li class="empty">Нет задач</li>

@@ -1,5 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { TaskStatus } from '../../models/task';
 import { TaskService } from '../../services/task.service';
 import { TaskBoardComponent } from './task-board';
@@ -12,7 +13,7 @@ describe('TaskBoardComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [TaskBoardComponent],
-      providers: [provideZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection(), provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TaskBoardComponent);
@@ -67,6 +68,10 @@ describe('TaskBoardComponent', () => {
     expect(task.uuid).toBeTruthy();
     expect(fixture.nativeElement.querySelector('form')).toBeNull();
     expect(text(fixture)).toContain('Новая задача');
+
+    const link = fixture.nativeElement.querySelector('a.task');
+    expect(link).not.toBeNull();
+    expect(link?.getAttribute('href')).toBe(`/tasks/${task.uuid}`);
   });
 });
 
