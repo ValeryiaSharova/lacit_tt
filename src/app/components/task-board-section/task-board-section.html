@@ -1,0 +1,17 @@
+<section class="column" [attr.aria-labelledby]="headingId()">
+  <h2 [id]="headingId()" class="column__title">{{ heading() }}</h2>
+
+  <ul class="task-list">
+    @for (task of tasks(); track task.uuid) {
+      <li
+        class="task"
+        [class.task--todo]="status() === TaskStatus.Todo"
+        [class.task--done]="status() === TaskStatus.Done"
+      >
+        <h3 class="task__title">{{ task.title }}</h3>
+      </li>
+    } @empty {
+      <li class="empty">Нет задач</li>
+    }
+  </ul>
+</section>

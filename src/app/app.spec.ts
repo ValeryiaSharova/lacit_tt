@@ -16,10 +16,12 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', () => {
+  it('should render the task board', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, lacit_tt');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Доска задач');
+    expect(compiled.textContent).toContain('Сделаю');
+    expect(compiled.textContent).toContain('Готово');
   });
 });

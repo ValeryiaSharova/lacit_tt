@@ -1,12 +1,10 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { TaskBoardComponent } from './components/task-board/task-board';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [TaskBoardComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App {
-  protected readonly title = signal('lacit_tt');
-}
+export class App {}

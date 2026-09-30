@@ -1,0 +1,8 @@
+<main class="board">
+  <h1 class="board__title">Доска задач</h1>
+
+  <div class="columns">
+    <app-task-board-section heading="Сделаю" [tasks]="todoTasks()" [status]="TaskStatus.Todo" />
+    <app-task-board-section heading="Готово" [tasks]="doneTasks()" [status]="TaskStatus.Done" />
+  </div>
+</main>
