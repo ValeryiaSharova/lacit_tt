@@ -2,11 +2,89 @@
   <a class="details__back" routerLink="/">Назад к задачам</a>
 
   @if (task(); as current) {
-    <article class="details__card" [class.details__card--done]="current.status === TaskStatus.Done">
-      <h1 class="details__title">{{ current.title }}</h1>
-      <p class="details__description">{{ current.description }}</p>
-      <p class="details__status">{{ statusLabels[current.status] }}</p>
-    </article>
+    @if (editing()) {
+      <form class="details__form" novalidate (submit)="onSubmit($event)">
+        <div class="field">
+          <label class="field__label" for="task-edit-title">Заголовок</label>
+          <input
+            id="task-edit-title"
+            class="field__control"
+            type="text"
+            autocomplete="off"
+            [formField]="taskForm.title"
+            [attr.aria-invalid]="taskForm.title().touched() && taskForm.title().invalid()"
+          />
+          <p class="field__counter">{{ taskForm.title().value().length }} / {{ titleMaxLength }}</p>
+          @if (taskForm.title().touched() && taskForm.title().invalid()) {
+            <p class="field__error">{{ taskForm.title().errors()[0].message }}</p>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="task-edit-description">Описание</label>
+          <textarea
+            id="task-edit-description"
+            class="field__control field__control--area"
+            rows="3"
+            [formField]="taskForm.description"
+            [attr.aria-invalid]="
+              taskForm.description().touched() && taskForm.description().invalid()
+            "
+          ></textarea>
+          <p class="field__counter">
+            {{ taskForm.description().value().length }} / {{ descriptionMaxLength }}
+          </p>
+          @if (taskForm.description().touched() && taskForm.description().invalid()) {
+            <p class="field__error">{{ taskForm.description().errors()[0].message }}</p>
+          }
+        </div>
+
+        <fieldset class="field fieldset">
+          <legend class="field__label">Статус</legend>
+          <div class="radios">
+            <label class="radio">
+              <input
+                class="radio__input"
+                type="radio"
+                [formField]="taskForm.status"
+                [attr.value]="TaskStatus.Todo"
+              />
+              Не готово
+            </label>
+            <label class="radio">
+              <input
+                class="radio__input"
+                type="radio"
+                [formField]="taskForm.status"
+                [attr.value]="TaskStatus.Done"
+              />
+              Готово
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="form__actions">
+          <button type="button" class="button button--ghost" (click)="cancelEditing()">
+            Отмена
+          </button>
+          <button type="submit" class="button button--primary">Сохранить</button>
+        </div>
+      </form>
+    } @else {
+      <article
+        class="details__card"
+        [class.details__card--done]="current.status === TaskStatus.Done"
+      >
+        <h1 class="details__title">{{ current.title }}</h1>
+        <p class="details__description">{{ current.description }}</p>
+        <p class="details__status">{{ statusLabels[current.status] }}</p>
+        <div class="details__actions">
+          <button type="button" class="button button--primary" (click)="startEditing()">
+            Редактировать
+          </button>
+        </div>
+      </article>
+    }
   } @else {
     <p class="details__missing">Задача не найдена</p>
   }

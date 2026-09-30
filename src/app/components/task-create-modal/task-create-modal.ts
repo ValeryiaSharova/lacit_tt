@@ -1,5 +1,10 @@
 import { Component, inject, output, signal } from '@angular/core';
-import { form, FormField, maxLength, minLength, required, submit } from '@angular/forms/signals';
+import { form, FormField, submit } from '@angular/forms/signals';
+import {
+  applyTaskTextRules,
+  taskDescriptionMaxLength,
+  taskTitleMaxLength,
+} from '../../forms/task-text-rules';
 import { TaskService } from '../../services/task.service';
 
 type TaskDraft = {
@@ -23,13 +28,13 @@ export class TaskCreateModalComponent {
 
   readonly closed = output<void>();
 
+  protected readonly titleMaxLength = taskTitleMaxLength;
+  protected readonly descriptionMaxLength = taskDescriptionMaxLength;
+
   private readonly taskModel = signal(emptyTaskDraft());
 
   protected readonly taskForm = form(this.taskModel, (schemaPath) => {
-    required(schemaPath.title, { message: 'Введите заголовок' });
-    minLength(schemaPath.title, 1, { message: 'Минимум 1 символ' });
-    maxLength(schemaPath.title, 20, { message: 'Максимум 20 символов' });
-    maxLength(schemaPath.description, 200, { message: 'Максимум 200 символов' });
+    applyTaskTextRules(schemaPath);
   });
 
   protected dismiss(): void {
